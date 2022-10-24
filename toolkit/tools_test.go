@@ -1,7 +1,9 @@
 package toolkit
 
 import "testing"
-
+// Function start with name Test followed by receiver Tools
+// and _ and name of function i.e. RandomString 
+// takes a param t of type *testing.T (pointer to testing.T)
 func TestTools_RandomString(t *testing.T) {
 	var testTools Tools
 
