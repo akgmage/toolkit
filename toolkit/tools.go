@@ -1,11 +1,15 @@
 package toolkit
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"net/http"
+)
 
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789_+"
 // Tools is the type used to instantiate this module, 
 // Any variable of this type will have access to all the methods with the receiver *Tools
 type Tools struct {
+	MaxFileSize int
 }
 // RandomString generates a random string of length n using randomStringSource as
 // the source for the string
@@ -23,4 +27,15 @@ type UploadedFile struct {
 	NewFileName 		string
 	OriginalFileName 	string
 	FileSize 			int64
+}
+
+func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) ([]*UploadedFile, error) {
+	renameFile := true
+	if len(rename) > 0 {
+		renameFile = rename[0]
+	}
+
+	var uploadedFile []*UploadedFile
+
+	err := r.ParseMultipartForm(int64(t.MaxFileSize))
 }
