@@ -3,10 +3,12 @@ package toolkit
 import "crypto/rand"
 
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789_+"
-
+// Tools is the type used to instantiate this module, 
+// Any variable of this type will have access to all the methods with the receiver *Tools
 type Tools struct {
 }
-// Generate random string of length n
+// RandomString generates a random string of length n using randomStringSource as
+// the source for the string
 func (t *Tools) RandomString(n int) string {
 	s, r := make([]rune, n), []rune(randomStringSource)
 	for i := range s {
