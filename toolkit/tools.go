@@ -18,3 +18,9 @@ func (t *Tools) RandomString(n int) string {
 	}
 	return string(s)
 }
+// UploadedFile is a struct used to save info about an uploaded file
+type UploadedFile struct {
+	NewFileName 		string
+	OriginalFileName 	string
+	FileSize 			int64
+}
