@@ -37,5 +37,9 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 
 	var uploadedFile []*UploadedFile
 
+	if t.MaxFileSize == 0 {
+		t.MaxFileSize = 1024 * 1024 * 1024
+	}
+
 	err := r.ParseMultipartForm(int64(t.MaxFileSize))
 }
