@@ -3,7 +3,11 @@ package toolkit
 import (
 	"crypto/rand"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -39,7 +43,8 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 	}
 
 	var uploadedFiles []*UploadedFile
-
+	
+	// make sure file isn't too big
 	if t.MaxFileSize == 0 {
 		t.MaxFileSize = 1024 * 1024 * 1024
 	}
@@ -67,8 +72,6 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				// TODO: check to see if file type is permitted
 				allowed := false
 				fileType := http.DetectContentType(buff)
-				// Only file types allowed
-				allowedTypes := []string{"image/jpeg", "image/png", "image/gif"}
 				// atleast one value is in there if it passes
 				if len(t.AllowedFileTypes) > 0 {
 					// range through allowedTypes and do a comparision
@@ -86,12 +89,37 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				if !allowed {
 					return nil, errors.New("the uploaded file type is not permitted")
 				}
-
+				// get back to starting of file
 				_, err = infile.Seek(0, 0) 
 				if err != nil {
 					return nil, err
 				}
- 
+
+				// deal with file
+
+				if renameFile {
+					// get renamed version of file
+					uploadedFile.NewFileName = fmt.Sprintf("%s%s", t.RandomString(25), filepath.Ext(hdr.Filename))
+				} else {
+					uploadedFile.NewFileName = hdr.Filename
+				}
+
+				// save to disk
+				var outfile *os.File
+				defer outfile.Close()
+
+				if outfile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
+					return nil, err
+				} else {
+					fileSize, err := io.Copy(outfile, infile)
+					if err != nil {
+						return nil, err
+					}
+					uploadedFile.FileSize = fileSize
+				}
+				uploadedFiles = append(uploadedFiles, &uploadedFile)
+				return uploadedFiles, nil
+
 			}(uploadedFiles)
 		}
 	}
