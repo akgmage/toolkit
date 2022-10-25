@@ -2,7 +2,9 @@ package toolkit
 
 import (
 	"crypto/rand"
+	"errors"
 	"net/http"
+	"strings"
 )
 
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789_+"
@@ -35,11 +37,45 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 		renameFile = rename[0]
 	}
 
-	var uploadedFile []*UploadedFile
+	var uploadedFiles []*UploadedFile
 
 	if t.MaxFileSize == 0 {
 		t.MaxFileSize = 1024 * 1024 * 1024
 	}
 
 	err := r.ParseMultipartForm(int64(t.MaxFileSize))
+
+	if err != nil {
+		return nil, errors.New("The uploaded file is too big")
+	}
+
+	for _, fHeaders := range r.MultipartForm.File {
+		for _, hdr := range fHeaders {
+			uploadedFiles, err = func(uploadedFiles []*UploadedFile) ([]*UploadFiles, error) {
+				var uploadedFile UploadedFile
+				infile, err := hdr.Open()
+				if err != nil {
+					return nil, err
+				}
+				defer infile.Close()
+				buff := make([]byte, 512)
+				_, err = infile.Read(buff)
+				if err != nil {
+					return nil, err
+				}
+				// TODO: check to see if file type is permitted
+				allowed := false
+				fileType := http.DetectContentType(buff)
+				allowedTypes := []string{"image/jpeg", "image/png", "image/gif"}
+				if len(allowedTypes) > 0 {
+					for _, x := range allowedTypes {
+						if strings.EqualFold(fileType, x) {
+							allowed = true
+						}
+					}
+				}
+
+			}(uploadedFiles)
+		}
+	}
 }
