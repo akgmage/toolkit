@@ -3,7 +3,9 @@ package toolkit
 import (
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
 )
 
@@ -94,6 +96,13 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				}
 
 				// deal with file
+
+				if renameFile {
+					// get renamed version of file
+					uploadedFile.NewFileName = fmt.Sprintf("%s%s", t.RandomString(25), filepath.Ext(hdr.Filename))
+				} else {
+
+				}
  
 			}(uploadedFiles)
 		}
