@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -70,8 +71,6 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				// TODO: check to see if file type is permitted
 				allowed := false
 				fileType := http.DetectContentType(buff)
-				// Only file types allowed
-				allowedTypes := []string{"image/jpeg", "image/png", "image/gif"}
 				// atleast one value is in there if it passes
 				if len(t.AllowedFileTypes) > 0 {
 					// range through allowedTypes and do a comparision
@@ -101,9 +100,17 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 					// get renamed version of file
 					uploadedFile.NewFileName = fmt.Sprintf("%s%s", t.RandomString(25), filepath.Ext(hdr.Filename))
 				} else {
-
+					uploadedFile.NewFileName = hdr.Filename
 				}
- 
+
+				// save to disk
+				var outfile *os.File
+				defer outfile.Close()
+
+				if outfile, err = os.Create(filepath.Join(uploadDir, uploadedFile.NewFileName)); err != nil {
+					return nil, err
+				}
+
 			}(uploadedFiles)
 		}
 	}
