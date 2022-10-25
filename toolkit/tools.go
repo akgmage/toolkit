@@ -83,6 +83,10 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 					allowed = true
 				}
 
+				if !allowed {
+					return nil, errors.New("the uploaded file type is not permitted")
+				}
+
 			}(uploadedFiles)
 		}
 	}
