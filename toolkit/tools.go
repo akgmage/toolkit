@@ -39,7 +39,8 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 	}
 
 	var uploadedFiles []*UploadedFile
-
+	
+	// make sure file isn't too big
 	if t.MaxFileSize == 0 {
 		t.MaxFileSize = 1024 * 1024 * 1024
 	}
@@ -86,11 +87,13 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				if !allowed {
 					return nil, errors.New("the uploaded file type is not permitted")
 				}
-
+				// get back to starting of file
 				_, err = infile.Seek(0, 0) 
 				if err != nil {
 					return nil, err
 				}
+
+				// deal with file
  
 			}(uploadedFiles)
 		}
