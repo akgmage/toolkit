@@ -12,6 +12,7 @@ const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ
 // Any variable of this type will have access to all the methods with the receiver *Tools
 type Tools struct {
 	MaxFileSize int
+	AllowedFileTypes []string
 }
 // RandomString generates a random string of length n using randomStringSource as
 // the source for the string
@@ -66,15 +67,31 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				// TODO: check to see if file type is permitted
 				allowed := false
 				fileType := http.DetectContentType(buff)
+				// Only file types allowed
 				allowedTypes := []string{"image/jpeg", "image/png", "image/gif"}
-				if len(allowedTypes) > 0 {
-					for _, x := range allowedTypes {
+				// atleast one value is in there if it passes
+				if len(t.AllowedFileTypes) > 0 {
+					// range through allowedTypes and do a comparision
+					for _, x := range t.AllowedFileTypes {
+						// is file type of currently uploaded file equal to one of the 
+						// things in the slice of string allowedTypes
 						if strings.EqualFold(fileType, x) {
 							allowed = true
 						}
 					}
+				} else {
+					allowed = true
 				}
 
+				if !allowed {
+					return nil, errors.New("the uploaded file type is not permitted")
+				}
+
+				_, err = infile.Seek(0, 0) 
+				if err != nil {
+					return nil, err
+				}
+ 
 			}(uploadedFiles)
 		}
 	}
