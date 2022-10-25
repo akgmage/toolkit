@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"net/http"
+	"strings"
 )
 
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789_+"
@@ -57,11 +58,23 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 					return nil, err
 				}
 				defer infile.Close()
-				buff := make([]bytes, 512)
+				buff := make([]byte, 512)
 				_, err = infile.Read(buff)
 				if err != nil {
 					return nil, err
 				}
+				// TODO: check to see if file type is permitted
+				allowed := false
+				fileType := http.DetectContentType(buff)
+				allowedTypes := []string{"image/jpeg", "image/png", "image/gif"}
+				if len(allowedTypes) > 0 {
+					for _, x := range allowedTypes {
+						if strings.EqualFold(fileType, x) {
+							allowed = true
+						}
+					}
+				}
+
 			}(uploadedFiles)
 		}
 	}
