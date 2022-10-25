@@ -2,6 +2,7 @@ package toolkit
 
 import (
 	"crypto/rand"
+	"errors"
 	"net/http"
 )
 
@@ -35,11 +36,17 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 		renameFile = rename[0]
 	}
 
-	var uploadedFile []*UploadedFile
+	var uploadedFiles []*UploadedFile
 
 	if t.MaxFileSize == 0 {
 		t.MaxFileSize = 1024 * 1024 * 1024
 	}
 
 	err := r.ParseMultipartForm(int64(t.MaxFileSize))
+
+	if err != nil {
+		return nil, errors.New("The uploaded file is too big")
+	}
+
+	
 }
