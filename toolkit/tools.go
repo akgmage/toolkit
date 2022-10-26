@@ -121,6 +121,9 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 				return uploadedFiles, nil
 
 			}(uploadedFiles)
+			if err != nil {
+				return uploadedFiles, err
+			}
 		}
 	}
 }
