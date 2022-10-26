@@ -7,7 +7,11 @@ func main() {
 }
 
 func routes() http.Handler{
-		
+	mux := http.NewServeMux()
+
+	mux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("."))))
+	
+	
 }
 // upload multiple files
 func uploadFiles(w http.ResponseWriter, r *http.Request) {
