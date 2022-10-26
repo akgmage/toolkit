@@ -57,7 +57,7 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 
 	for _, fHeaders := range r.MultipartForm.File {
 		for _, hdr := range fHeaders {
-			uploadedFiles, err = func(uploadedFiles []*UploadedFile) ([]*UploadFiles, error) {
+			uploadedFiles, err = func(uploadedFiles []*UploadedFile) ([]*UploadedFile, error) {
 				var uploadedFile UploadedFile
 				infile, err := hdr.Open()
 				if err != nil {
@@ -126,4 +126,5 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 			}
 		}
 	}
+	return uploadedFiles, nil
 }
