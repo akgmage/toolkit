@@ -49,7 +49,8 @@ func uploadFiles(w http.ResponseWriter, r *http.Request) {
 	for _, item := range files {
 		out += fmt.Sprintf("Uploaded %s to the uploads folder, renamed to %s\n", item.OriginalFileName, item.NewFileName)
 	}
-	
+	_, _ = w.Write([]byte(out))
+}
 // upload one file
 func uploadOneFile(w http.ResponseWriter, r *http.Request) {
 
