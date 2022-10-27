@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -39,6 +40,12 @@ func uploadFiles(w http.ResponseWriter, r *http.Request) {
 		MaxFileSize: 1024 * 1024 *1024,
 		AllowedFileTypes: []string{"image/jpeg", "image/png", "image/gif"},
 	}
+
+	files, err := t.UploadFiles(r, "./uploads")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	
 }
 // upload one file
 func uploadOneFile(w http.ResponseWriter, r *http.Request) {
