@@ -35,6 +35,7 @@ func routes() http.Handler{
 func uploadFiles(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
 	t := toolkit.Tools{
 		MaxFileSize: 1024 * 1024 *1024,
@@ -44,6 +45,7 @@ func uploadFiles(w http.ResponseWriter, r *http.Request) {
 	files, err := t.UploadFiles(r, "./uploads")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	out := ""
 	for _, item := range files {
