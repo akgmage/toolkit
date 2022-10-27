@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/akgmage/toolkit"
 )
 
 func main() {
@@ -32,6 +34,10 @@ func routes() http.Handler{
 func uploadFiles(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+	t := toolkit.Tools{
+		MaxFileSize: 1024 * 1024 *1024,
+		AllowedFileTypes: []string{"image/jpeg", "image/png", "image/gif"},
 	}
 }
 // upload one file
