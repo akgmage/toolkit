@@ -3,6 +3,7 @@ package toolkit
 import (
 	"io"
 	"mime/multipart"
+	"os"
 	"sync"
 	"testing"
 )
@@ -40,6 +41,18 @@ func TestTools_UploadFiles(t *testing.T) {
 		go func() {
 			defer writer.Close()
 			defer wg.Done()
+
+			// create form data field file
+			part, err := writer.CreateFormFile("file", "./testdata/img.png")
+			if err != nil {
+				t.Error(err)
+			}
+
+			f, err := os.Open("./testdata/img.png")
+			if err!= nil {
+				t.Error(err)
+			}
+			defer f.Close()
 		}
 	}
 }
