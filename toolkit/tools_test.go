@@ -5,6 +5,7 @@ import (
 	"image/png"
 	"io"
 	"mime/multipart"
+	"net/http/httptest"
 	"os"
 	"sync"
 	"testing"
@@ -66,5 +67,11 @@ func TestTools_UploadFiles(t *testing.T) {
 				t.Error(err)
 			}
 		}()
+
+		// read from pipe which receives data
+
+		request := httptest.NewRequest("POST", "/", pr)
+		// sets the  correct content type for the payload   
+		request.Header.Add("Content-Type", writer.FormDataContentType())
 	}
 }
