@@ -32,9 +32,11 @@ func TestTools_UploadFiles(t *testing.T) {
 	for _, e := range uploadTests{
 		// set up pipe to avoid buffering
 		pr, pw := io.Pipe()
+		// make sure things occur in particular sequence
 		writer := multipart.NewWriter(pw)
 		wg := sync.WaitGroup{}
 		wg.Add(1)
+		// fire off goroutine in background
 		go func() {
 			defer writer.Close()
 			defer wg.Done()
