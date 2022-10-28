@@ -1,8 +1,12 @@
 package toolkit
 
 import (
+	"image"
+	"image/png"
 	"io"
 	"mime/multipart"
+	"net/http/httptest"
+	"os"
 	"sync"
 	"testing"
 )
@@ -40,6 +44,34 @@ func TestTools_UploadFiles(t *testing.T) {
 		go func() {
 			defer writer.Close()
 			defer wg.Done()
-		}
+
+			// create form data field file
+			part, err := writer.CreateFormFile("file", "./testdata/img.png")
+			if err != nil {
+				t.Error(err)
+			}
+
+			f, err := os.Open("./testdata/img.png")
+			if err!= nil {
+				t.Error(err)
+			}
+			defer f.Close()
+
+			img, _, err := image.Decode(f)
+			if err != nil {
+				t.Error("error decoding image", err)
+			}
+
+			err = png.Encode(part, img)
+			if err != nil {
+				t.Error(err)
+			}
+		}()
+
+		// read from pipe which receives data
+
+		request := httptest.NewRequest("POST", "/", pr)
+		// sets the  correct content type for the payload   
+		request.Header.Add("Content-Type", writer.FormDataContentType())
 	}
 }
