@@ -2,6 +2,7 @@ package toolkit
 
 import (
 	"image"
+	"image/png"
 	"io"
 	"mime/multipart"
 	"os"
@@ -59,6 +60,11 @@ func TestTools_UploadFiles(t *testing.T) {
 			if err != nil {
 				t.Error("error decoding image", err)
 			}
-		}
+
+			err = png.Encode(part, img)
+			if err != nil {
+				t.Error(err)
+			}
+		}()
 	}
 }
