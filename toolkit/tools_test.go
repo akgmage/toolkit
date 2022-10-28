@@ -35,6 +35,9 @@ func TestTools_UploadFiles(t *testing.T) {
 		writer := multipart.NewWriter(pw)
 		wg := sync.WaitGroup{}
 		wg.Add(1)
-	
+		go func() {
+			defer writer.Close()
+			defer wg.Done()
+		}
 	}
 }
