@@ -12,3 +12,10 @@ func TestTools_RandomString(t *testing.T) {
 		t.Error("Wrong length random string returned")
 	}
 }
+
+var uploadTests = []struct{
+	name string
+	allowedTypes []string
+	renameFile bool
+	errorExpected bool
+}
