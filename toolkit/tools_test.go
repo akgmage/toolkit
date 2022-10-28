@@ -1,6 +1,7 @@
 package toolkit
 
 import (
+	"image"
 	"io"
 	"mime/multipart"
 	"os"
@@ -53,6 +54,11 @@ func TestTools_UploadFiles(t *testing.T) {
 				t.Error(err)
 			}
 			defer f.Close()
+
+			img, _, err := image.Decode(f)
+			if err != nil {
+				t.Error("error decoding image", err)
+			}
 		}
 	}
 }
