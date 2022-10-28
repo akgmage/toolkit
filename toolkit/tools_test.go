@@ -3,6 +3,7 @@ package toolkit
 import (
 	"io"
 	"mime/multipart"
+	"sync"
 	"testing"
 )
 
@@ -32,5 +33,8 @@ func TestTools_UploadFiles(t *testing.T) {
 		// set up pipe to avoid buffering
 		pr, pw := io.Pipe()
 		writer := multipart.NewWriter(pw)
+		wg := sync.WaitGroup{}
+		wg.Add(1)
+	
 	}
 }
