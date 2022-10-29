@@ -93,5 +93,6 @@ func TestTools_UploadFiles(t *testing.T) {
 		if !e.errorExpected && err != nil {
 			t.Errorf("%s: error expected but none received", e.name)
 		}
+		wg.Wait()
 	}
 }
