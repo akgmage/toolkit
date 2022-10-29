@@ -84,10 +84,12 @@ func TestTools_UploadFiles(t *testing.T) {
 		}
 
 		if !e.errorExpected {
+			// Stat returns a FileInfo describing the named file. If there is an error, it will be of type *PathError
 			if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName)); os.IsNotExist(err) {
+				// Errorf is equivalent to Logf followed by Fail.
 				t.Errorf("%s: expected file to exist: %s", e.name, err.Error())
 			}
-			// clean up
+			// Remove removes the named file or directory. If there is an error, it will be of type *PathError.
 			_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName))
 		}
 
