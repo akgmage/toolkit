@@ -87,7 +87,13 @@ func TestTools_UploadFiles(t *testing.T) {
 			if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName)); os.IsNotExist(err) {
 				t.Errorf("%s: expected file to exist: %s", e.name, err.Error())
 			}
+			// clean up
 			_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName))
 		}
+
+		if !e.errorExpected && err != nil {
+			t.Errorf("%s: error expected but none received", e.name)
+		}
+		wg.Wait()
 	}
 }
