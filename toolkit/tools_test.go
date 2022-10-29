@@ -73,5 +73,13 @@ func TestTools_UploadFiles(t *testing.T) {
 		request := httptest.NewRequest("POST", "/", pr)
 		// sets the  correct content type for the payload   
 		request.Header.Add("Content-Type", writer.FormDataContentType())
+
+		var testTools Tools
+		testTools.AllowedFileTypes = e.allowedTypes
+
+		uploadedFiles, err := testTools.UploadOneFile(request, "./testdata/uploads/", e.renameFile)
+		if err != nil && !e.errorExpected{
+			t.Error(err)
+		}
 	}
 }
