@@ -89,5 +89,9 @@ func TestTools_UploadFiles(t *testing.T) {
 			}
 			_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName))
 		}
+
+		if !e.errorExpected && err != nil {
+			t.Errorf("%s: error expected but none received", e.name)
+		}
 	}
 }
