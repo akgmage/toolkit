@@ -1,6 +1,7 @@
 package toolkit
 
 import (
+	"fmt"
 	"image"
 	"image/png"
 	"io"
@@ -73,5 +74,20 @@ func TestTools_UploadFiles(t *testing.T) {
 		request := httptest.NewRequest("POST", "/", pr)
 		// sets the  correct content type for the payload   
 		request.Header.Add("Content-Type", writer.FormDataContentType())
+
+		var testTools Tools
+		testTools.AllowedFileTypes = e.allowedTypes
+
+		uploadedFiles, err := testTools.UploadFiles(request, "./testdata/uploads/", e.renameFile)
+		if err != nil && !e.errorExpected{
+			t.Error(err)
+		}
+
+		if !e.errorExpected {
+			if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName)); os.IsNotExist(err) {
+				t.Errorf("%s: expected file to exist: %s", e.name, err.Error())
+			}
+			_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].NewFileName))
+		}
 	}
 }
