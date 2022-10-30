@@ -134,5 +134,27 @@ func TestTools_UploadOneFile(t *testing.T) {
 			}
 		}()
 
-		
+		// read from pipe which receives data
+
+		request := httptest.NewRequest("POST", "/", pr)
+		// sets the  correct content type for the payload   
+		request.Header.Add("Content-Type", writer.FormDataContentType())
+
+		var testTools Tools
+
+
+		uploadedFiles, err := testTools.UploadOneFile(request, "./testdata/uploads/", true)
+		if err != nil {
+			t.Error(err)
+		}
+
+		// Stat returns a FileInfo describing the named file. If there is an error, it will be of type *PathError
+		if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles.NewFileName)); os.IsNotExist(err) {
+			// Errorf is equivalent to Logf followed by Fail.
+			t.Errorf("expected file to exist: %s", err.Error())
+		}
+		// Remove removes the named file or directory. If there is an error, it will be of type *PathError.
+		_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles.NewFileName))
+
+
 }
