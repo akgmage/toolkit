@@ -31,6 +31,8 @@ var uploadTests = []struct{
 	errorExpected bool
 }{
 	{name: "allowed no rename", allowedTypes: []string{"image/jpeg", "image/png"}, renameFile: false, errorExpected: false},
+	{name: "allowed rename", allowedTypes: []string{"image/jpeg", "image/png"}, renameFile: true, errorExpected: false},
+	{name: "not allowed", allowedTypes: []string{"image/jpeg",}, renameFile: true, errorExpected: true},
 }
 
 func TestTools_UploadFiles(t *testing.T) {
@@ -98,4 +100,61 @@ func TestTools_UploadFiles(t *testing.T) {
 		}
 		wg.Wait()
 	}
+}
+
+func TestTools_UploadOneFile(t *testing.T) {
+		// set up pipe to avoid buffering
+		pr, pw := io.Pipe()
+		// make sure things occur in particular sequence
+		writer := multipart.NewWriter(pw)
+		// fire off goroutine in background
+		go func() {
+			defer writer.Close()
+		
+			// create form data field file
+			part, err := writer.CreateFormFile("file", "./testdata/img.png")
+			if err != nil {
+				t.Error(err)
+			}
+
+			f, err := os.Open("./testdata/img.png")
+			if err!= nil {
+				t.Error(err)
+			}
+			defer f.Close()
+
+			img, _, err := image.Decode(f)
+			if err != nil {
+				t.Error("error decoding image", err)
+			}
+
+			err = png.Encode(part, img)
+			if err != nil {
+				t.Error(err)
+			}
+		}()
+
+		// read from pipe which receives data
+
+		request := httptest.NewRequest("POST", "/", pr)
+		// sets the  correct content type for the payload   
+		request.Header.Add("Content-Type", writer.FormDataContentType())
+
+		var testTools Tools
+
+
+		uploadedFiles, err := testTools.UploadOneFile(request, "./testdata/uploads/", true)
+		if err != nil {
+			t.Error(err)
+		}
+
+		// Stat returns a FileInfo describing the named file. If there is an error, it will be of type *PathError
+		if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles.NewFileName)); os.IsNotExist(err) {
+			// Errorf is equivalent to Logf followed by Fail.
+			t.Errorf("expected file to exist: %s", err.Error())
+		}
+		// Remove removes the named file or directory. If there is an error, it will be of type *PathError.
+		_ = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles.NewFileName))
+
+
 }
