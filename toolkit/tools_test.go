@@ -107,5 +107,32 @@ func TestTools_UploadOneFile(t *testing.T) {
 		pr, pw := io.Pipe()
 		// make sure things occur in particular sequence
 		writer := multipart.NewWriter(pw)
+		// fire off goroutine in background
+		go func() {
+			defer writer.Close()
+		
+			// create form data field file
+			part, err := writer.CreateFormFile("file", "./testdata/img.png")
+			if err != nil {
+				t.Error(err)
+			}
+
+			f, err := os.Open("./testdata/img.png")
+			if err!= nil {
+				t.Error(err)
+			}
+			defer f.Close()
+
+			img, _, err := image.Decode(f)
+			if err != nil {
+				t.Error("error decoding image", err)
+			}
+
+			err = png.Encode(part, img)
+			if err != nil {
+				t.Error(err)
+			}
+		}()
+
 		
 }
