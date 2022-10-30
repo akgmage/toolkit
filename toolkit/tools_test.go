@@ -31,6 +31,8 @@ var uploadTests = []struct{
 	errorExpected bool
 }{
 	{name: "allowed no rename", allowedTypes: []string{"image/jpeg", "image/png"}, renameFile: false, errorExpected: false},
+	{name: "allowed rename", allowedTypes: []string{"image/jpeg", "image/png"}, renameFile: true, errorExpected: false},
+	{name: "not allowed", allowedTypes: []string{"image/jpeg",}, renameFile: true, errorExpected: true},
 }
 
 func TestTools_UploadFiles(t *testing.T) {
