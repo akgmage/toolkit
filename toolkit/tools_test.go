@@ -101,3 +101,11 @@ func TestTools_UploadFiles(t *testing.T) {
 		wg.Wait()
 	}
 }
+
+func TestTools_UploadOneFile(t *testing.T) {
+		// set up pipe to avoid buffering
+		pr, pw := io.Pipe()
+		// make sure things occur in particular sequence
+		writer := multipart.NewWriter(pw)
+		
+}
