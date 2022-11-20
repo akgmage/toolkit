@@ -138,7 +138,7 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 	}
 	return uploadedFiles, nil
 }
-
+// CreateDirIfNotExist Creates a directory and all necessary parents, if it does not exist
 func (t *Tools) CreateDirIfNotExist(path string) error {
 	const mode = 0755
 
