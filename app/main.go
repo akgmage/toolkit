@@ -12,4 +12,6 @@ func main() {
 	s := tools.RandomString(10)
 
 	fmt.Println("Random String:", s)
+	tools.CreateDirIfNotExist("./test-dir")
+	
 }
