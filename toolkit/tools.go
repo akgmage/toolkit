@@ -58,6 +58,7 @@ func  (t *Tools) UploadFiles(r *http.Request, uploadDir string, rename ...bool) 
 	if t.MaxFileSize == 0 {
 		t.MaxFileSize = 1024 * 1024 * 1024
 	}
+	// Creates a directory and all necessary parents, if it does not exist
 	err := t.CreateDirIfNotExist(uploadDir)
 	if err != nil {
 		return nil, err
