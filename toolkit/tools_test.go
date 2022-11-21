@@ -183,6 +183,7 @@ var slugTests = []struct {
 	errorExpected bool
 } {
 	{name: "valid string", s: "now is the time", expected: "now-is-the-time", errorExpected: false},
+	{name: "", s: "now is the time", expected: "", errorExpected: true},
 }
 
 func TestTools_Slugify(t *testing.T) {
