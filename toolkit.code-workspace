@@ -8,6 +8,9 @@
     },
     {
       "path": "../app-dir"
+    },
+    {
+      "path": "app-slug"
     }
   ]
 }
