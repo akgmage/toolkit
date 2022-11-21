@@ -186,6 +186,7 @@ var slugTests = []struct {
 	{name: "", s: "now is the time", expected: "", errorExpected: true},
 	{name: "complex string", s: "Now is the time! + Goal &123 ^", expected: "now-is-the-time-goal-123", errorExpected: true},
 	{name: "Japanese string", s: "こんにちは世界", expected: "", errorExpected: true},
+	{name: "Japanese string", s: "こんにちは世界hello world", expected: "hello-world", errorExpected: false},
 }
 
 func TestTools_Slugify(t *testing.T) {
